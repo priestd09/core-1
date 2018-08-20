@@ -1,4 +1,4 @@
-package mesg
+package api
 
 import (
 	"fmt"
@@ -20,12 +20,12 @@ import (
 type serviceDeployer struct {
 	Statuses chan string
 
-	mesg *MESG
+	api *API
 }
 
-func newServiceDeployer(mesg *MESG) *serviceDeployer {
+func newServiceDeployer(api *API) *serviceDeployer {
 	return &serviceDeployer{
-		mesg: mesg,
+		api: api,
 	}
 }
 
@@ -90,7 +90,7 @@ func (d *serviceDeployer) deploy(path string) (*service.Service, *importer.Valid
 	}
 
 	d.sendStatus("Building Docker image...")
-	imageHash, err := d.mesg.container.Build(path)
+	imageHash, err := d.api.container.Build(path)
 	if err != nil {
 		return nil, nil, err
 	}

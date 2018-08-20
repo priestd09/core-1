@@ -1,4 +1,4 @@
-package mesg
+package api
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ import (
 func TestDeployService(t *testing.T) {
 	path := "./service-test"
 
-	mesg, dt := newMESGAndDockerTest(t)
+	mesg, dt := newAPIAndDockerTest(t)
 	dt.ProvideImageBuild(ioutil.NopCloser(strings.NewReader(`{"stream":"sha256:x"}`)), nil)
 
 	statuses := make(chan string)
@@ -48,7 +48,7 @@ func TestDeployService(t *testing.T) {
 func TestDeployInvalidService(t *testing.T) {
 	path := "./service-test-invalid"
 
-	mesg, dt := newMESGAndDockerTest(t)
+	a, dt := newAPIAndDockerTest(t)
 	dt.ProvideImageBuild(ioutil.NopCloser(strings.NewReader(`{"stream":"sha256:x"}`)), nil)
 
 	statuses := make(chan string)
@@ -63,7 +63,7 @@ func TestDeployInvalidService(t *testing.T) {
 		})
 		require.Nil(t, err)
 
-		service, validationError, err := mesg.DeployService(archive, DeployServiceStatusOption(statuses))
+		service, validationError, err := a.DeployService(archive, DeployServiceStatusOption(statuses))
 		require.Nil(t, service)
 		require.Nil(t, err)
 		require.Equal(t, (&importer.ValidationError{}).Error(), validationError.Error())
@@ -83,7 +83,7 @@ func TestDeployInvalidService(t *testing.T) {
 func TestDeployServiceFromURL(t *testing.T) {
 	url := "https://github.com/mesg-foundation/service-webhook"
 
-	mesg, dt := newMESGAndDockerTest(t)
+	a, dt := newAPIAndDockerTest(t)
 	dt.ProvideImageBuild(ioutil.NopCloser(strings.NewReader(`{"stream":"sha256:x"}`)), nil)
 
 	statuses := make(chan string)
@@ -92,7 +92,7 @@ func TestDeployServiceFromURL(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		service, validationError, err := mesg.DeployServiceFromURL(url, DeployServiceStatusOption(statuses))
+		service, validationError, err := a.DeployServiceFromURL(url, DeployServiceStatusOption(statuses))
 		require.Nil(t, validationError)
 		require.Nil(t, err)
 		require.Equal(t, 1, structhash.Version(service.Id))

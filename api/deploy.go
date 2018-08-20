@@ -1,4 +1,4 @@
-package mesg
+package api
 
 import (
 	"io"
@@ -18,8 +18,8 @@ func DeployServiceStatusOption(statuses chan string) DeployServiceOption {
 }
 
 // DeployService deploys a service from a gzipped tarball.
-func (m *MESG) DeployService(r io.Reader, options ...DeployServiceOption) (*service.Service, *importer.ValidationError, error) {
-	deployer := newServiceDeployer(m)
+func (a *API) DeployService(r io.Reader, options ...DeployServiceOption) (*service.Service, *importer.ValidationError, error) {
+	deployer := newServiceDeployer(a)
 	for _, option := range options {
 		option(deployer)
 	}
@@ -27,8 +27,8 @@ func (m *MESG) DeployService(r io.Reader, options ...DeployServiceOption) (*serv
 }
 
 // DeployServiceFromURL deploys a service lives at a Git host.
-func (m *MESG) DeployServiceFromURL(url string, options ...DeployServiceOption) (*service.Service, *importer.ValidationError, error) {
-	deployer := newServiceDeployer(m)
+func (a *API) DeployServiceFromURL(url string, options ...DeployServiceOption) (*service.Service, *importer.ValidationError, error) {
+	deployer := newServiceDeployer(a)
 	for _, option := range options {
 		option(deployer)
 	}
